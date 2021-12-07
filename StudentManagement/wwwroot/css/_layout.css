@@ -1,0 +1,88 @@
+﻿/*Index_layout*/
+.limit_Container {
+    position: relative;
+}
+
+.content {
+    position: absolute;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+table.dataTable {
+    border-collapse: collapse !important;
+    border-style: outset !important;
+}
+
+.rounded-pill {
+    color: white;
+    width: 23%;
+}
+
+.btn-success {
+    background-color: #19dd21;
+    border-color: #9af39e;
+}
+
+.borderbut {
+    border: none;
+    background: none;
+}
+
+.btn-warning:hover {
+    color: white
+}
+
+.btn-info:hover {
+    color: white
+}
+
+.btn-success:hover {
+    color: white
+}
+
+.btn-success:hover {
+    color: #fff;
+    background-color: #19dd21;
+    border-color: #9af39e;
+}
+
+success, .btn-success:focus {
+    color: #fff;
+    background-color: #19dd21;
+    border-color: #9af39e;
+}
+
+.btn-warning, .btn-warning:focus {
+    color: #fff;
+}
+
+.btn-info:focus {
+    color: #fff;
+}
+
+.doctorBell {
+    top: -2px;
+    right: -2px;
+    position: absolute;
+    border: 0px solid red;
+    border-radius: 50%;
+    background-color: red;
+    width: 15px;
+    height: 19px;
+    color: aliceblue;
+}
+
+.studentBell {
+    top: -10px;
+    right: -4px;
+    position: absolute;
+    border: 0px solid red;
+    border-radius: 50%;
+    background-color: red;
+    width: 15px;
+    height: 19px;
+    color: aliceblue;
+}

@@ -1,0 +1,145 @@
+﻿@inject SignInManager<User> signInManager
+@{
+    var user = new User();
+    if (signInManager.IsSignedIn(User))
+    {
+        user = signInManager.UserManager.FindByNameAsync(User.Identity.Name).Result;
+    }
+    var avatar = user.Avatar ?? "/images/no-avatar.png";
+    var stu = User.IsInRole("Student");
+    var name = user.FullName;
+}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+    <title>学生の入力一覧</title>
+    <meta content="" name="description">
+    <meta content="" name="keywords">
+    <link href="~/css/site.css" rel="stylesheet" />
+    <!-- Vendor CSS Files -->
+    <link href="~/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="~/assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+    <!-- Template Main CSS File -->
+    <link href="~/css/_layout.css" rel="stylesheet" />
+    <link href="~/assets/css/style.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" media="all">
+
+    @*Skill*@
+    <link href="~/css/Skill.css" rel="stylesheet" />
+    @*Skill*@
+
+
+</head>
+
+<body class="toggle-sidebar">
+
+    <!-- ======= Header ======= -->
+    <header id="header" class="header fixed-top d-flex align-items-center">
+
+        <div class="d-flex align-items-center justify-content-between">
+            <a class="logo d-flex align-items-center">
+                <span class="d-none d-lg-block">社会人基礎力</span>
+            </a>
+        </div><!-- End Logo -->
+        <nav class="header-nav ms-auto">
+            <ul class="d-flex align-items-center">
+                @if (!stu)
+                {
+                    <a id="backButton" asp-controller="Student" asp-action="Index"><i style=" font-size: 33px; border-right: 2px solid #555; color: blue" class="bi bi-chevron-left"></i></a>
+                }
+                <li class="nav-item"><a asp-controller="Account" asp-action="Signout"><i class="bx bx-power-off p-2" style="font-size:30px;border-right:2px solid #555;color:red"></i></a></li>
+                <li class="nav-item dropdown pe-3">
+
+                    <a class="nav-link nav-profile d-flex align-items-center pe-0" asp-controller="Account" asp-action="Signout">
+                        <img src="@avatar" alt="Profile" class="rounded-circle">
+                        <span class="d-none d-md-block" style="color:gray">@name</span>
+                    </a><!-- End Profile Iamge Icon -->
+                </li><!-- End Profile Nav -->
+
+            </ul>
+        </nav><!-- End Icons Navigation -->
+
+    </header><!-- End Header -->
+
+
+    <main id="main" class="main">
+        @RenderBody()
+
+    </main><!-- End #main -->
+    @*Skill*@
+
+     
+    <script src="~/js/Skill.js"></script>
+    
+
+    @*Skill*@
+
+
+
+
+    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="~/assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
+    <script src="https://nightly.datatables.net/js/jquery.dataTables.js"></script>
+    <script src="https://nightly.datatables.net/js/dataTables.bootstrap4.min.js "></script>
+    <!-- Template Main JS File -->
+    <script src="~/assets/js/main.js"></script>
+    @RenderSection("Scripts", required: false)
+    <script src="~/js/signalr/dist/browser/signalr.js"></script>
+    <script>
+        $(document).ready(function () {
+
+            var currentUrl = location.href;
+            if (currentUrl == "https://localhost:44390/Student/Index") {
+                document.getElementById("backButton").hidden = true;
+            }
+            else {
+                document.getElementById("backButton").hidden = false;
+            }
+        });
+    </script>
+    <script>
+        var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub",).build();
+        connection.start();
+        connection.on("ShowNotify", function (message) {
+            ShowNotify(message);
+        });
+
+        function ShowNotify(message) {
+            toastr.success(message)
+        };
+    </script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+    <script>
+        //datatb
+        $("#mytbEvent").DataTable({
+            "searching": false,
+            "ordering": false,
+            "bLengthChange": false,
+            "bInfo": false,
+            "language": {
+                "paginate": {
+                    "next": "»",
+                    "previous": "«"
+                }
+            },
+            "oLanguage": {
+                "sEmptyTable": "テーブルにデータがありません"
+            }
+        });
+        $(document).ready(function () {
+            $('#mytbEvent').DataTable();
+        });
+    </script>
+</body>
+
+</html>

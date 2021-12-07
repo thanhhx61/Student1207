@@ -1,0 +1,72 @@
+﻿@model ViewMessages
+@inject SignInManager<User> signInManager
+@inject UserManager<User> userManager
+@{
+    var user = new User();
+    var users = ViewBag.User as StudentManagement.Entities.User;
+    Layout = "~/Views/Shared/_CreateEventLayout.cshtml";
+    if (signInManager.IsSignedIn(User))
+    {
+        user = signInManager.UserManager.FindByNameAsync(User.Identity.Name).Result;
+    }
+    var id = user.Id;
+}
+@foreach (var item in Model.Messages)
+{
+    var role = userManager.GetRolesAsync(item.User);
+    <div class="outgoing">
+        <div class="centerr @(item.UserId == id ? "contentright" :"contentnone")">
+            @if (!(item.UserId == id))
+            {
+
+                <div>
+                    <div>
+                        <img class="rounded-circle" style="width: 60px" src="@item.User.Avatar" alt="">
+                    </div>
+                    <div>
+                        <p class="bubble1">@role.Result[0]</p>
+                    </div>
+                </div>
+                <div>
+                    <div class="bubble">
+                        <strong style="float:left">@item.User.UserName</strong>
+                        <br />
+                        <p>@item.Content</p>
+                        <br>
+                        <span class="datetime">@item.Timestamp</span>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div>
+                    <div class="bubble">
+
+                        <p>@item.Content</p>
+                        <br>
+                        <span class="datetime">@item.Timestamp</span>
+                        <div class="EditMess">
+                            <button onclick="getEdit(@item.MessagesId)"><i class="fas fa-pencil-alt text-primary"></i></button>
+                        </div>
+                        <div class="DeteleMess">
+                            <button onclick="getRemove(@item.MessagesId)"> <i class="fas fa-trash-alt text-danger"></i> </button>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div>
+                        <img class="rounded-circle" style="width: 60px" src="@item.User.Avatar" alt="">
+                    </div>
+                    <div>
+                        <p class="bubble1">@role.Result[0]</p>
+                    </div>
+                </div>
+            }
+        </div>
+
+    </div>
+}
+@section Scripts {
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css" rel="stylesheet" />
+    <link href="~/css/messages.css" rel="stylesheet" />
+}

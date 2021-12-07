@@ -1,0 +1,252 @@
+﻿@model StudentManagement.Models.Students.EditEvents
+
+@inject SignInManager<User> signInManager
+@{
+    var student = User.IsInRole("Student");
+    var doctor = User.IsInRole("Doctor");
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_CreateEventLayout.cshtml";
+    var users = ViewBag.User as StudentManagement.Entities.User;
+    var user = new User();
+    if (signInManager.IsSignedIn(User))
+    {
+        user = signInManager.UserManager.FindByNameAsync(User.Identity.Name).Result;
+    }
+    var avatar = user.Avatar ?? "/images/no-avatar.png";
+    var id = user.Id;
+}
+
+<div class="page-wrapper bg-blue p-t-100 p-b-100 font-robo">
+    <div class="wrapper wrapper--w680">
+        <div class="card card-1">
+            <div class="card-heading"></div>
+            <div class="card-body">
+                <form asp-controller="Events" asp-action="Edit" method="post">
+                    <input type="hidden" asp-for="UserId" />
+                    <input type="hidden" asp-for="EventId" />
+                    <div class="form-group row mb-3">
+                        <label class="control-label col-sm-2"><strong>イベント選択</strong></label>
+                        <div class="col-sm-12">
+                            <select asp-for="ListEventId" class="form-select" asp-items="ViewBag.ListEventId"></select>
+                        </div>
+                    </div>
+                    <div class="form-group row mb-3">
+                        <label class="control-label col-sm-2"><strong>学校生活での出来事</strong></label>
+                        <div class="col-sm-12">
+                            <textarea class="form-control" asp-for="Activities" style="height: 100px;"></textarea>
+                            <span asp-validation-for="Activities" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group row mb-3">
+                        <label class="control-label col-sm-2"><strong>自分の行動</strong></label>
+                        <div class="col-sm-12">
+                            <textarea class="form-control" asp-for="Act" style="height: 100px;"></textarea>
+                            <span asp-validation-for="Act" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group row mb-3">
+                        <label class="control-label col-sm-2"><strong>発揮した力</strong></label>
+                        <div class="col-sm-12">
+                            <textarea class="form-control" asp-for="PowerExerted" style="height: 100px;"></textarea>
+                            <span asp-validation-for="PowerExerted" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group row mb-3">
+                        <label class="control-label col-sm-2"><strong>伸びた能力</strong></label>
+                        <div class="col-sm-12">
+                            <textarea class="form-control" asp-for="PowerDev" style="height: 100px;"></textarea>
+                            <span asp-validation-for="PowerDev" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group row mb-3">
+                        <label class="control-label col-sm-2"><strong>考えたこと</strong></label>
+                        <div class="col-sm-12">
+                            <textarea class="form-control" asp-for="Think" style="height: 100px;"></textarea>
+                            <span asp-validation-for="Think" class="text-danger"></span>
+                        </div>
+                    </div>
+                    @if (student)
+                    {
+                        <div class="p-t-20 row">
+                            <div class="col-lg-12 text-center"><button class="btn btn--radius btn-info center" type="submit">新規</button></div>
+                        </div>
+                    }
+                </form>
+            </div>
+        </div>
+        <div class="p-2 msg-card-body">
+            <div class="chat_box">
+                <div class="body" style="overflow: auto;" id="chatbody">
+                </div>
+                <div class="input-group">
+                    <div class="img_cont_msg pr-3 border-0 text-center">
+                        <img src="@avatar" class="rounded-circle user_img_msg">
+                    </div>
+                    <textarea id="emojionearea" class="form-control shadow-none m-0" style="border-radius:12px" placeholder=". . .コメント追加"></textarea>
+                    <button class="btn btn-dark" id="sendCmt">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                    <button class="btn btn-dark" id="closeCmt" hidden>
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    <script src="~/js/signalr/dist/browser/signalr.js"></script>
+    <link href="~/css/EditEvt.css" rel="stylesheet" />
+    <script>
+        let messId = 0;
+        var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
+        connection.start();
+        connection.on("SendMessages", function () {
+            LoadData();
+        });
+        function LoadData() {
+            $.ajax({
+                url: '/Messages/Index/' + @Model.EventId,
+                type: 'GET',
+                success: function (data) {
+                    $("#chatbody").empty();
+                    $("#chatbody").html(data);
+
+                },
+                error: (error) => {
+                    console.log(error)
+                }
+            });
+        };
+        //AddComment
+        $('#sendCmt').on('click', function () {
+             var content = $('#emojionearea').val();
+             const cmt = { Content: content, EventId: @Model.EventId };
+            if (messId == 0) {
+                if (content.length != 0) {
+                    $.ajax({
+                        url: '/Messages/Create',
+                        type: 'POST',
+                        data: cmt,
+                        success: function (data) {
+                            if (data == true) {
+                                $('.emojionearea-editor').text('');
+                            } else {
+                                alert(data)
+                            }
+                        },
+                        error: function () {
+                        }
+                    });
+                }
+            } else {
+                if (content.length != 0) {
+                    const cmt = {
+                        Content: content
+                    }
+                    $.ajax({
+                        url: '/Messages/Edit/' + messId,
+                        type: 'POST',
+                        data: cmt,
+                        success: function (data) {
+                            if (data == true) {
+                                $('#closeCmt').attr('hidden', true);
+                                $('.emojionearea-editor').text(null);
+                                $('#emojionearea').val(null)
+                                messId = 0;
+                            }
+                        }
+                    })
+                }
+            }
+        })
+        //EditComment
+        function getEdit(id) {
+            messId = id;
+            $.ajax({
+                url: "/Messages/Edit/" + messId,
+                type:'GET',
+                success: function (data) {
+                    if (data) {
+                        $('.emojionearea-editor').text(data.content);
+                        $('#closeCmt').removeAttr('hidden');
+                    }
+                },
+                error: function () {
+                    console.log(data.content);
+                }
+            });
+        };
+        //RemoveComment
+        function getRemove(id) {
+                $.ajax({
+                    url: "/Messages/Delete/" + id,
+                    success: function (result) {
+                        if (result) {
+                            console.log("success");
+                        }
+                    },
+                    error: function () {
+                        console.log("Failed to send message!");
+                    }
+                });
+            return false;
+        };
+        //closeButton
+        $('#closeCmt').on('click', function () {
+            $('#closeCmt').attr('hidden',true);
+            $('.emojionearea-editor').text('');
+            messId = 0;
+        })
+        //comment #
+        $(document).ready(function () {
+            let checkRole = '@doctor';
+            if (checkRole.toLowerCase() == '@true'.toLowerCase()) {
+                $("#emojionearea").emojioneArea({
+                    events: {
+                        keyup: function (editor, event) {
+                            editor.textcomplete([{
+                                id: emojionearea,
+                                match: /\B#([\-\d\w]*)$/,
+                                search: function (term, callback) {
+                                    $.ajax({
+                                        url: "/Messages/CallHashTag/",
+                                        type: 'GET',
+                                        success: function (data) {
+                                            if (data) {
+                                                callback(data);
+                                            } else {
+                                                console.log('Error');
+                                            }
+                                        }
+                                    }),
+                                        callback($.map(term, function (value) {
+                                            return value.indexOf(term) === 0 ? value : null;
+                                        }));
+                                },
+                                template: function (value) {
+                                    return value + '&nbsp'
+                                },
+                                replace: function (value) {
+                                    return '#' + value + ' ';
+                                },
+
+                                cache: true,
+                                index: 1
+                            }])
+                        }
+                    },
+                    search: false
+                })
+            } else {
+                $("#emojionearea").emojioneArea({
+                    search: false
+                })
+            }
+        });
+        LoadData();
+    </script>
+}

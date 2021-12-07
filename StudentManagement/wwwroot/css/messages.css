@@ -1,0 +1,67 @@
+﻿
+.centerr {
+    align-items: center;
+}
+
+.contentright {
+    display: flex;
+    justify-content: right;
+    text-align: right;
+}
+
+.contentnone {
+    display: flex;
+}
+
+.EditMess {
+    position: relative;
+    visibility: hidden;
+    opacity: 0;
+    border-radius: 50%;
+    background-color: white;
+    bottom: 60px;
+    left: 60%;
+    width: 25px;
+    height: 25px;
+}
+
+    .EditMess button i {
+        transform: translate(-23%,14%);
+    }
+
+.bubble:hover .EditMess {
+    visibility: visible;
+    opacity: 1;
+}
+
+.DeteleMess {
+    position: relative;
+    visibility: hidden;
+    opacity: 0;
+    border-radius: 50%;
+    background-color: white;
+    bottom: 85px;
+    left: 80%;
+    width: 25px;
+    height: 25px;
+}
+
+    .DeteleMess button i {
+        transform: translate(-11%,16%);
+    }
+
+.bubble:hover .DeteleMess {
+    visibility: visible;
+    opacity: 1;
+}
+.datetime {
+    font-style: italic;
+    text-align: left;
+    font-size: 12px;
+}
+
+.name-role {
+    background-color: #6496df;
+    color: white;
+    font-weight: 700;
+}

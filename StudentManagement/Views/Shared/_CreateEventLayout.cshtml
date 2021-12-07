@@ -1,0 +1,73 @@
+﻿@inject SignInManager<User> signInManager
+@{
+    var user = new User();
+    if (signInManager.IsSignedIn(User))
+    {
+        user = signInManager.UserManager.FindByNameAsync(User.Identity.Name).Result;
+    }
+    var avatar = user.Avatar ?? "/images/no-avatar.png";
+}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>学生の入力一覧</title>
+    <meta content="" name="description">
+    <meta content="" name="keywords">
+    <!--Imoj-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/emojionearea/3.4.2/emojionearea.min.css">
+    <link href="~/css/site.css" rel="stylesheet" />
+    <!-- Vendor CSS Files -->
+    <link href="~/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="~/assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+
+    <!-- Template Main CSS File -->
+    <link href="~/assets/css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/layoutCreate/css/style.css">
+    <link href="~/layoutCreate/css/main.css" rel="stylesheet" media="all">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+
+<body style="background: url(https://localhost:44390/layoutCreate/images/bg-regist-event.png) no-repeat top fixed; background-size: cover;">
+    <header id="header" class="header fixed-top d-flex align-items-center">
+
+        <div class="d-flex align-items-center justify-content-between">
+            <a class="logo d-flex align-items-center">
+                <span class="d-none d-lg-block">社会人基礎力</span>
+            </a>
+        </div>
+        <nav class="header-nav ms-auto">
+            <ul class="d-flex align-items-center">
+                <li class="nav-item"><button onclick="historyBack()"><i style=" font-size: 37px; border-right: 2px solid #555; color: blue" class="bi bi-chevron-left"></i></button></li>
+                <li class="nav-item"><a asp-controller="Account" asp-action="Signout"><i class="bx bx-power-off p-2" style="font-size:30px;border-right:2px solid #555;color:red"></i></a></li>
+                <li class="nav-item dropdown pe-3">
+
+                    <a class="nav-link nav-profile d-flex align-items-center pe-0" asp-controller="Account" asp-action="Signout">
+                        <img src="@avatar" alt="Profile" class="rounded-circle">
+                        <span class="d-none d-md-block">@User.Identity.Name</span>
+                    </a>
+                </li>
+
+            </ul>
+        </nav>
+
+    </header>
+    @RenderBody()
+    <script src="~/layoutCreate/js/global.js"></script>
+    <!--imoj-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.textcomplete/1.8.5/jquery.textcomplete.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/emojionearea/3.4.2/emojionearea.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/yuku-t/jquery-textcomplete@v1.3.4/dist/jquery.textcomplete.js"></script>
+    <script src="~/assets/js/main.js"></script>
+    @RenderSection("Scripts", required: false)
+    <script>
+        function historyBack() {
+            history.back();
+        }
+    </script>
+</body>
+</html>
+<!-- end document-->

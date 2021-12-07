@@ -1,0 +1,44 @@
+﻿textarea {
+    resize: none;
+}
+
+.user_img_msg {
+    height: 60px;
+    width: 60px;
+    border: 3px solid #ffffff;
+}
+
+.fa-paper-plane {
+    color: #0a71ca;
+    font-size: 25px;
+}
+
+.fa-times {
+    font-size: 40px;
+    color: #0a71ca;
+}
+
+button:hover i {
+    color: #0a71ca;
+    transform: scale(1.2);
+}
+
+.btn-white {
+    border-radius: 50%;
+    background: white;
+}
+
+#sendCmt {
+    height: 65px;
+    border-radius: 50%;
+    background: white;
+}
+
+#closeCmt {
+    height: 65px;
+    border-radius: 50%;
+    background: white;
+}
+.btn-info:hover {
+    color: white;
+}
